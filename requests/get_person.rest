@@ -1,0 +1,4 @@
+GET http://localhost:3001/api/persons/1
+
+### With bad id
+GET http://localhost:3001/api/persons/*ç!s

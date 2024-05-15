@@ -1,0 +1,4 @@
+DELETE http://localhost:3001/api/persons/1
+
+### With bad id
+DELETE http://localhost:3001/api/persons/çàs5

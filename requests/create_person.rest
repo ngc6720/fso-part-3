@@ -1,0 +1,13 @@
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name": "Jean Mich",
+    "number": "040-654321"
+}
+
+### Without content
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{}
