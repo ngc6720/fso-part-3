@@ -1,7 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // data
 
@@ -49,7 +50,7 @@ morgan.token("post", function (req, res) {
 });
 
 // server
-
+app.use(cors());
 app.use(express.json());
 
 app.use(
@@ -65,6 +66,7 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/api/persons", (req, res) => {
+  console.log("HAHAHAHA");
   res.json(persons);
 });
 
