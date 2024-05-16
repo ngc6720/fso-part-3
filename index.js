@@ -50,6 +50,8 @@ morgan.token("post", function (req, res) {
 });
 
 // server
+app.use(express.static("dist"));
+
 app.use(cors());
 app.use(express.json());
 
