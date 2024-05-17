@@ -3,7 +3,6 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const Person = require("./models/person");
-const person = require("./models/person");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -21,6 +20,10 @@ morgan.token("post", function (req, res) {
 const errorHandler = (err, req, res, next) => {
   if (res.headersSent) {
     return next(err);
+  }
+
+  if (err.name === "ValidationError") {
+    res.status(400).send({ error: err.message });
   }
 
   if (err.name === "CastError") {
@@ -63,7 +66,7 @@ app.get("/api/persons/:id", (req, res, next) => {
     .catch((err) => next(err));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const { name, number } = req.body;
 
   if (!name || !number) {
@@ -77,9 +80,12 @@ app.post("/api/persons", (req, res) => {
     number: number,
   });
 
-  newPerson.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  newPerson
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((err) => next(err));
 });
 
 app.delete("/api/persons/:id", (req, res, next) => {
@@ -93,18 +99,16 @@ app.delete("/api/persons/:id", (req, res, next) => {
 app.put("/api/persons/:id", (req, res, next) => {
   const { name, number } = req.body;
 
-  if (!name || !number) {
-    return res.status(400).json({
-      error: "name or number missing",
-    });
-  }
-
-  const person = {
+  const personObj = {
     name: name,
     number: number,
   };
 
-  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+  Person.findByIdAndUpdate(req.params.id, personObj, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedPerson) => {
       res.json(updatedPerson);
     })
